@@ -4,53 +4,36 @@ const Fetch = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
+    const fetchData = async function() {
+      setLoading(true);
+      setError(null);
 
-    fetch('https://jsonplaceholder.typicode.com/posts/1')
-      .then(response => {
+      try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+        
         if (response.ok) {
-          return response.json();
+          const data = await response.json();
+          setData(data);
         } else {
           throw new Error('Failed to fetch data');
         }
-      })
-      .then(data => {
-        setData(data);
         setLoading(false);
-      })
-      .catch(error => {
+      } catch (error) {
         setError(error.message);
-        setLoading(false);
-      });
-  }, []);
+      }
+    };
 
-  // fetch('https://jsonplaceholder.typicode.com/posts/1')
-  // .then(response => {
-  //   if (response.ok) {
-  //     return response.json();
-  //   } else {
-  //     throw new Error('Failed to fetch data');
-  //   }
-  // })
-  // .then(data => {
-  //   setData(data);
-  //   setLoading(false);
-  // })
-  // .catch(error => {
-  //   setError(error.message);
-  //   setLoading(false);
-  // });
+    fetchData();
+  }, []);
 
   return (
     <div>
       <h1>Fetch Example</h1>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
+      {loading && <p>Loading...</p>}{/* if loading is true, show Loading... */}
+      {error && <p>Error: {error}</p>} {/* if error is true, show Error: {error} */}
       {data && <div>
         <h2>{data.title}</h2>
         <p>{data.body}</p>
